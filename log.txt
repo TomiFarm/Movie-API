@@ -46,3 +46,6 @@ Timestamp: Tue Dec 13 2022 19:28:00 GMT+0100 (Central European Standard Time)
 URL: /favicon.ico
 Timestamp: Tue Dec 13 2022 19:28:00 GMT+0100 (Central European Standard Time)
 
+::1 - - [16/Dec/2022:12:19:13 +0000] "GET /documentation.html HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [16/Dec/2022:12:19:19 +0000] "GET /documentation HTTP/1.1" 404 152 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [16/Dec/2022:12:19:23 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
