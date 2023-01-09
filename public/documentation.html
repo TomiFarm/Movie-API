@@ -3,8 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <title>Movie API</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 
 <body>
-    <p>This is a movie API made for learning purposes</p>
+    <header>
+        <h1>Documentation of Movie API</h1>
+        <p>This is a movie API made for learning purposes</p>
+    </header>
+    <main>
+        <p>The movie API will be able to do the following:</p>
+        <ul>
+            <li>Return a list of ALL movies to the user</li>
+            <li>Return data (description, genre, director, image URL, whether it’s featured or not) about a single movie by title to the user</li>
+            <li>Return data about a genre (description) by name/title (e.g., “Thriller”)</li>
+            <li>Return data about a director (bio, birth year, death year) by name</li>
+            <li>Allow new users to register</li>
+            <li>Allow users to update their user info (username)</li>
+            <li>Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later)</li>
+            <li>Allow users to remove a movie from their list of favorites (showing only a text that a movie has been removed—more on this later)</li>
+            <li>Allow existing users to deregister (showing only a text that a user email has been removed—more on this later)</li>
+        </ul>
+        <table>
+            <tr>
+                <th>Business Logic</th>
+                <th>URL</th>
+                <th>HTTP Method</th>
+                <th>Request body data format</th>
+                <th>Response body data format</th>
+            </tr>
+            <tr>
+                <td>Get a list of all movies</td>
+                <td>/movies</td>
+                <td>GET</td>
+                <td>none</td>
+                <td>A JSON object holding data about all movies</td>
+            </tr>
+            <tr>
+                <td>Get data about a single movie by title</td>
+                <td>/movies/[movie title]</td>
+                <td>GET</td>
+                <td>none</td>
+                <td>A JSON object holding data about a single movie</td>
+            </tr>
+            <tr>
+                <td>Get data about a genre by name</td>
+                <td>/movies/genre/[genre name]</td>
+                <td>GET</td>
+                <td>none</td>
+                <td>A JSON object holding data about a genre</td>
+            </tr>
+            <tr>
+                <td>Get data about a director</td>
+                <td>/movies/directors/[director name]</td>
+                <td>GET</td>
+                <td>none</td>
+                <td>A JSON object holding data about a director</td>
+            </tr>
+            <tr>
+                <td>Add a new user</td>
+                <td>/users</td>
+                <td>POST</td>
+                <td>A JSON object holding data about the user, structured like:<br>
+                    {<br>
+                        "name": "John Doe",<br>
+                        "username": "Username",<br>
+                        "email": "john.doe@example.com",<br>
+                        "favoriteMovies": "[]"<br>
+                    }
+                </td>
+                <td>A JSON object holding data about the user that was added, including an ID:<br>
+                    {<br>
+                        id: 1,<br>
+                        "name": "John Doe",<br>
+                        "username": "Username",<br>
+                        "email": "john.doe@example.com",<br>
+                        "favoriteMovies": "[]"<br>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>Update user info</td>
+                <td>/users/[user ID]</td>
+                <td>PUT</td>
+                <td>A JSON object holding data about the user, structured like:<br>
+                    {<br>
+                        "name": "John Doe",<br>
+                        "username": "Username",<br>
+                        "email": "john.doe@example.com",<br>
+                        "favoriteMovies": "[]"<br>
+                    }
+                </td>
+                <td>A JSON object holding data about the user that was updated:<br>
+                    {<br>
+                        id: 1,<br>
+                        "name": "John Doe",<br>
+                        "username": "Username",<br>
+                        "email": "john.doe@example.com",<br>
+                        "favoriteMovies": "[]"<br>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>Add a movie to favorites</td>
+                <td>/users/[user ID]/[movie title]</td>
+                <td>POST</td>
+                <td>none</td>
+                <td>A text message indicating the movie has been added</td>
+            </tr>
+            <tr>
+                <td>Remove a movie from favorites</td>
+                <td>/users/[user ID]/[movie title]</td>
+                <td>DELETE</td>
+                <td>none</td>
+                <td>A text message indicating the movie has been removed</td>
+            </tr>
+            <tr>
+                <td>Remove a user</td>
+                <td>/users/[user ID]</td>
+                <td>DELETE</td>
+                <td>none</td>
+                <td>A text message indicating the user has been removed</td>
+            </tr>
+        </table>
+    </main>
 </body>
