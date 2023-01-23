@@ -7,9 +7,11 @@ const express = require('express'),
     mongoose = require('mongoose'),
     Models = require('./models.js'),
     Movies = Models.Movie,
-    Users = Models.User;
+    Users = Models.User,
+    cors = require('cors');
 
 const app = express();
+const {check, validationResult} = require('express-validator');
 
 mongoose.connect('mongodb://127.0.0.1:27017/cfDB', {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {
@@ -27,6 +29,19 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) === -1){
+            let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
+
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
@@ -41,21 +56,22 @@ app.get('/public/documentation.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/documentation.html'));
 })
 
-// Get all users
-app.get('/users', (req, res) => {
-    Users.find()
-        .then((users) => {
-            res.status(200).json(users);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
-
 // CREATE
 // Add a new user to users object in /users endpoint and return added user as json object
-app.post('/users', (req, res) => {
+app.post('/users',
+    [
+        check('Username', 'Username is required').isLength({min: 5}),
+        check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('Password', 'Password is required').not().isEmpty(),
+        check('Email', 'Email does not appear to be valid').isEmail()
+    ], (req, res) => {
+
+    let errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(422).json({errors: errors.array()});
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({Username: req.body.Username})
         .then((user) => {
             if(user){
@@ -64,15 +80,15 @@ app.post('/users', (req, res) => {
                 Users
                     .create({
                         Username: req.body.Username,
-                        Password: req.body.Password,
+                        Password: hashedPassword,
                         Email: req.body.Email,
                         Birthday: req.body.Birthday
                     })
                     .then((user) => {res.status(201).json(user)})
-                .catch((error) => {
-                    console.error(error);
-                    res.status(500).send('Error: ' + error);
-                })
+                    .catch((error) => {
+                        console.error(error);
+                        res.status(500).send('Error: ' + error);
+                    })
             }
         })
         .catch((error) => {
@@ -213,7 +229,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something went wrong!');
 });
 
-// Listen for Port 8080
-app.listen(8080, () => {
-    console.log('Listening  port 8080');
+// Listen on port
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+    console.log('Listening on port ' + port);
 });
