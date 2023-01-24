@@ -13,7 +13,18 @@ const express = require('express'),
 const app = express();
 const {check, validationResult} = require('express-validator');
 
-mongoose.connect('mongodb://127.0.0.1:27017/cfDB', {useNewUrlParser: true, useUnifiedTopology: true})
+// LOCAL DB
+// mongoose.connect('mongodb://127.0.0.1:27017/cfDB', {useNewUrlParser: true, useUnifiedTopology: true})
+//     .then(() => {
+//         console.log('Connected to Mongo!');
+//     })
+//     .catch((err) => {
+//         console.log('Error connecting to Mongo');
+//         console.log(err);
+//     });
+
+// REMOTE DB
+mongoose.connect(process.env.CONNECTION_URI, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {
         console.log('Connected to Mongo!');
     })
