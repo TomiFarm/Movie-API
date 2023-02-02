@@ -196,7 +196,8 @@ app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), (
 
 // READ
 // Send response from /movies to return json object of movie data of all movies
-app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res) => {
+// removed passport.authenticate('jwt', { session: false }),
+app.get('/movies', (req, res) => {
     Movies.find()
         .then(movies => {
             res.status(200).json(movies);
