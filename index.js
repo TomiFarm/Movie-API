@@ -40,7 +40,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://127.0.0.1:8080', 'http://127.0.0.1:1234'];
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://127.0.0.1:8080', 'http://127.0.0.1:1234', 'http://95.90.236.237'];
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -66,6 +66,19 @@ app.get('/', (req, res) => {
 app.get('/public/documentation.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/documentation.html'));
 })
+
+// READ
+// Get users list
+app.get('/users', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Users.find()
+        .then(users => {
+            res.status(200).json(users);
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+        });
+});
 
 // CREATE
 // Add a new user to users object in /users endpoint and return added user as json object
