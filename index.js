@@ -40,7 +40,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://127.0.0.1:8080', 'http://127.0.0.1:1234', 'http://95.90.236.237'];
+let allowedOrigins = ['http://myflix-123.netlify.app', 'http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://127.0.0.1:8080', 'http://127.0.0.1:1234', 'http://95.90.236.237'];
 
 app.use(cors({
     origin: (origin, callback) => {
