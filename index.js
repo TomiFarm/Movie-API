@@ -80,6 +80,17 @@ app.get('/users', passport.authenticate('jwt', {session: false}), (req, res) => 
         });
 });
 
+app.get('/users/:Username', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Users.findOne({Username: req.params.Username})
+        .then(user => {
+            res.status(200).json(user);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
+
 // CREATE
 // Add a new user to users object in /users endpoint and return added user as json object
 app.post('/users',
