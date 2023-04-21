@@ -40,7 +40,16 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-let allowedOrigins = ['https://myflix-123.netlify.app', 'http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://127.0.0.1:8080', 'http://127.0.0.1:1234', 'http://95.90.236.237'];
+// CORS - cross-origin resource sharing - allowed origins
+let allowedOrigins = [
+    'https://myflix-123.netlify.app',
+    'http://localhost:8080',
+    'http://testsite.com',
+    'http://localhost:1234',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:1234',
+    'http://95.90.236.237'
+];
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -53,22 +62,35 @@ app.use(cors({
     }
 }));
 
+
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-// Send response from root
+// ENDPOINTS
+
+/**
+ * Returns a response from root
+ * @kind Endpoint
+ * @param none
+ * @returns Welcome message
+ */
 app.get('/', (req, res) => {
     res.send('Welcome to myFlix');
 });
 
-// Send response from /public/documentation to return documentation.html file
+/** 
+* Returns a documentation.html file from /public/documentation
+* @returns documentation.html file
+*/
 app.get('/public/documentation.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/documentation.html'));
 })
 
-// READ
-// Get users list
+/**
+ * Returns a json object of all users
+ * @returns a json object of all users
+ */
 app.get('/users', passport.authenticate('jwt', {session: false}), (req, res) => {
     Users.find()
         .then(users => {
@@ -80,8 +102,9 @@ app.get('/users', passport.authenticate('jwt', {session: false}), (req, res) => 
         });
 });
 
-// CREATE
-// Add a new user to users object in /users endpoint and return added user as json object
+/**
+ * Add a new user to users object in /users endpoint and return added user as json object
+ */
 app.post('/users',
     [
         check('Username', 'Username is required').isLength({min: 5}),
@@ -121,8 +144,9 @@ app.post('/users',
         });
 });
 
-// UPDATE
-// Update existing user's name in /users/[username] endpoint and return updated user json object
+/**
+ * Update existing user's name in /users/[username] endpoint and return updated user json object
+ */
 app.put('/users/:Username',
     [
         check('Username', 'Username is required').isLength({min: 5}),
@@ -157,8 +181,9 @@ app.put('/users/:Username',
     });
 });
 
-// CREATE
-// add a movie to favorite movies in users object in /users/[username]/movies/[movieID] endpoint and return a success message
+/**
+ * Add a movie to favorite movies in users object in /users/[username]/movies/[movieID] endpoint and return a success message
+ */
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false}), (req, res) => {
     Users.findOneAndUpdate({Username: req.params.Username}, {
         $push: {Favorites: req.params.MovieID}
@@ -174,8 +199,9 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {sessi
     });
 });
 
-// DELETE
-// Remove a movie from favorite movies in users object in /users/[username]/movies/[movieTitle] endpoint and return a success message
+/**
+ * Remove a movie from favorite movies in users object in /users/[username]/movies/[movieTitle] endpoint and return a success message
+ */
 app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false}), (req, res) => {
     Users.findOneAndUpdate({Username: req.params.Username}, {
         $pull: {Favorites: req.params.MovieID}
@@ -191,7 +217,9 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {ses
     });
 });
 
-// Remove an existing user from users object in /users/[id] endpoint and return a success message
+/**
+ * Remove an existing user from users object in /users/[id] endpoint and return a success message
+ */
 app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), (req, res) => {
     Users.findOneAndRemove({Username: req.params.Username})
         .then((user) => {
@@ -207,8 +235,9 @@ app.delete('/users/:Username', passport.authenticate('jwt', {session: false}), (
         });
 });
 
-// READ
-// Send response from /movies to return json object of movie data of all movies
+/**
+ * Send response from /movies to return json object of movie data of all movies
+ */
 app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res) => {
     Movies.find()
         .then(movies => {
@@ -220,7 +249,9 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res) =>
         });
 });
 
-// Send response from /movies/[movieTitle]] to return json object of data of a single movie
+/**
+ * Send response from /movies/[movieTitle]] to return json object of data of a single movie
+ */
 app.get('/movies/:Title', passport.authenticate('jwt', {session: false}), (req, res) => {
     Movies.findOne({Title: req.params.Title})
         .then(movie => {
@@ -232,8 +263,9 @@ app.get('/movies/:Title', passport.authenticate('jwt', {session: false}), (req, 
         });
 });
 
-
-// Send response from /movies/genre/[genreName] to return json object of data of a single genre
+/**
+ * Send response from /movies/genre/[genreName] to return json object of data of a single genre
+ */
 app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false}), (req, res) => {
     Movies.findOne({"Genre.Name": req.params.genreName})
         .then(movie => {
@@ -245,8 +277,9 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false
         });
 });
 
-
-// Send response from /movies/directors/[directorName] to return json object of data of a single director
+/**
+ * Send response from /movies/directors/[directorName] to return json object of data of a single director
+ */
 app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false}), (req, res) => {
     Movies.findOne({"Director.Name": req.params.directorName})
         .then(movie => {
